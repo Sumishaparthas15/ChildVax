@@ -90,7 +90,47 @@
         padding: 20px;
         background-color: #ffffff;
     }
+    .filter-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
 
+    .filter-button {
+        padding: 10px 20px;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .filter-button:hover {
+        background-color: #34495e;
+    }
+    .status-filter {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 150px;
+    margin-left: 10px;
+}
+
+.apply-filter-button {
+    padding: 10px 15px;
+    background-color: #34495e;
+    color: #ecf0f1;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.apply-filter-button:hover {
+    background-color: #2c3e50;
+}
     table {
         width: 100%;
         border-collapse: collapse;
@@ -158,12 +198,34 @@
             <a href="{% url 'patients' %}">Patients</a>
             <a href="{% url 'bookings' %}">Bookings</a>
             <a href="{% url 'notification' %}">Notification</a>
+            <a href="{% url 'leave' %}">Leave</a>
             <a href="{% url 'admin_logout' %}">Logout</a>
         </div>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h2>Bookings List</h2>
+            <!-- <h2>Bookings List</h2> -->
+           <!-- Filter Row -->
+                <div class="filter-row">
+                    <h2>Bookings List</h2>
+
+                    <!-- Filter Form with Dropdown -->
+                    <form method="GET" action="{% url 'filter_bookings' %}">
+                        <label for="status">Status:</label>
+                        <select name="status" id="status">
+                            <option value="">--Select Status--</option>
+                            <option value="Upcoming" {% if status == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+                            <option value="Cancelled" {% if status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                            
+                            <option value="Refunded" {% if status == 'Refunded' %}selected{% endif %}>Refunded</option>
+                            <option value="Completed" {% if status == 'Completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                        <button type="submit">Apply</button>
+                    </form>
+                    
+                </div>
+
+            
             <table>
                 <tr>
                     <th>Patient Name</th>
@@ -212,5 +274,21 @@
             </div>
         </main>
     </div>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('statusDropdown');
+            const submitButton = document.getElementById('submitFilter');
+    
+            // Toggle visibility of dropdown and submit button
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'inline-block';
+                submitButton.style.display = 'inline-block';
+            } else {
+                dropdown.style.display = 'none';
+                submitButton.style.display = 'none';
+            }
+        }
+    </script>
+    
 </body>
 </html>

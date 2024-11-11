@@ -11,36 +11,109 @@
             margin: 0;
             display: flex;
         }
-        .navbar {
-            background-color: #5a2a82; /* Sidebar background color */
-            padding: 10px;
-            border-radius: 5px;
-            width: 200px; /* Width of the sidebar */
-            height: 100vh; /* Full height */
-            position: fixed; /* Fixes the navbar on the left */
-        }
-        .navbar ul {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            flex-direction: column; /* Vertical layout */
-        }
-        .navbar li {
-            margin: 15px 0; /* Space between items */
-        }
-        .navbar a {
-            color: #ffffff; /* White color for links */
-            text-decoration: none;
-            font-weight: bold;
-            padding: 8px 12px; /* Padding for clickable area */
-            border-radius: 5px;
-            display: block; /* Makes the entire area clickable */
-            text-align: center; /* Center align text */
-        }
-        .navbar a:hover {
-            background-color: #4e2371; /* Highlight on hover */
-            color: white;
-        }
+               /* Navbar */
+        /* Navbar styles */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #5a2a82;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s;
+    transform: translateX(-100%);
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    to { transform: translateX(0); }
+}
+
+/* Sidebar Header */
+.sidebar-header h3 {
+    color: #fff;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+/* User Info Section */
+.user-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 10px;
+    width: 90%;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.user-info span {
+    display: block;
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.profile-button {
+    display: inline-block;
+    color: #fff;
+    background-color: #4e2371;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.profile-button:hover {
+    background-color: #3d1d63;
+}
+
+/* Sidebar Links */
+.sidebar-links {
+    width: 100%;
+}
+
+.sidebar-links a {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 20px;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 8px 0;
+    transition: background-color 0.3s, transform 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-links a:hover {
+    background-color: #4e2371;
+    transform: translateX(10px);
+}
+
+/* White Stroke/Underline for Links */
+.sidebar-links a::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin: auto;
+    opacity: 0.7;
+    transition: transform 0.2s;
+}
+
+.sidebar-links a:hover::after {
+    transform: scaleX(1.1);
+}
+
         .container-wrapper {
             display: flex;
             justify-content: center;
@@ -77,15 +150,26 @@
 <body>
     <nav class="navbar">
         <div class="sidebar">
-            <h3>Navigation</h3>
-            <a href="{% url 'bookup' %}">Book Up</a>
-            <a href="{% url 'about' %}">About</a>
-            <a href="{% url 'profile' %}">Profile</a>
-            <a href="{% url 'history' %}">Op History</a>
-            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                {% csrf_token %}
-            </form>
-            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <div class="sidebar-header">
+                <h3>ChildVax</h3>
+            </div>
+            
+            <div class="user-info">
+                <span>Hi, {{ user.username }}</span>
+                <a href="{% url 'profile' %}" class="profile-button">View Profile</a>
+            </div>
+            
+            <div class="sidebar-links">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'bookup' %}">Book Up</a>
+                <a href="{% url 'about' %}">About</a>
+                <a href="{% url 'history' %}">Op History</a>
+                
+                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            </div>
         </div>
     </nav>
 

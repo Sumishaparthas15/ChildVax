@@ -14,55 +14,74 @@
         }
 
         body {
-            line-height: 1.6;
+            background: url("{% static 'images/bg.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
             color: #333;
-        }
-
-        .container {
-            width: 90%;
-            margin: 0 auto;
-        }
-
-        header {
-            background: #fff;
-            padding: 10px 0;
-        }
-
-        header nav ul {
-            list-style: none;
+            height: 100vh;
             display: flex;
-            justify-content: center;
-            margin-top: 10px;
+            flex-direction: column;
         }
 
-        header nav ul li {
-            margin: 0 20px;
+        /* Header Styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: rgba(74, 0, 125, 0.7); /* Transparent background */
+            color: #fff;
         }
 
-        header nav ul li a {
-            color: black;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        header .logo h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 15px;
+            list-style: none;
+        }
+
+        nav ul li a {
+            color: #fff;
             text-decoration: none;
-            font-size: 16px;
+            font-weight: bold;
         }
 
-        header .btn.book-appointment {
+        .btn.book-appointment {
             background: #28a745;
             color: white;
             padding: 10px 20px;
             border-radius: 10px;
             text-decoration: none;
-            margin-left: auto;
         }
 
+        /* Login Form Styling */
         .login-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: calc(100vh - 60px); /* Adjust for header height */
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0); /* Fully transparent background */
         }
 
+
         form {
-            background: #f9f9f9;
+           
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -97,6 +116,7 @@
             text-align: center;
             margin-top: 20px;
         }
+
         .forgot-password {
             text-align: center;
             margin-top: 10px;
@@ -110,7 +130,6 @@
         .forgot-password a:hover {
             text-decoration: underline;
         }
-
 
         .message-list {
             list-style: none;
@@ -130,28 +149,16 @@
 <body>
     <!-- Header -->
     <header>
-        <div class="container">
-            <nav>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Doctors</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Pages</a></li>
-                    <li><a href="#">Blogs</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="{% url 'login' %}" class="btn book-appointment">Login</a></li>
-                </ul>
-            </nav>
+        <div class="logo">
+            <img src="{% static 'images/logo.jpg' %}" alt="Child Health Clinic Logo">
+            <h1>ChildVax</h1>
         </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+            </ul>
+        </nav>
     </header>
-
-    {% if messages %}
-    <ul class="message-list">
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
 
     <!-- Login Form -->
     <div class="login-container">
@@ -167,11 +174,9 @@
             <label for="password">Password:</label>
             {{ form.password }}
             
-            
-
             <button type="submit">Login</button>
-            <h5><a href="{% url 'forgetpassword' %}">Forgot Password?</a><h5>
-            <h6>Don't have an account? <a href="{% url 'register' %}" class="btn book-appointment">Register</a></h6>
+          
+            <h6>Don't have an account? <a href="{% url 'register' %}" >Register</a></h6>
         </form>
     </div>
 </body>

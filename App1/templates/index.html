@@ -1,169 +1,550 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mediplus - Medical Services</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Child Health Clinic</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #4a007d;
+    color: #fff;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Add some space between the image and text */
+}
+
+.logo img {
+    width: 60px;  /* Set the desired width for the circle */
+    height: 60px; /* Set the same height to make it a square */
+    border-radius: 50%; /* This makes the image circular */
+    object-fit: cover; /* Ensures the image covers the circle nicely */
+}
+
+
+header .logo h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+header .logo p {
+    font-size: 14px;
+    margin: 0;
+}
+
+nav ul {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.doctor-profile {
+    display: flex;
+    align-items: center;
+    padding: 50px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 1400px;
+}
+
+.profile-content {
+    flex: 1;
+    padding-right: 30px;
+}
+.profile-content h2 {
+    color: #4a007d;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+.clinic-name {
+    color: #9c27b0;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.doctor-name {
+    color: #1c1f3e;
+    font-size: 2.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.doctor-details {
+    color: #777;
+    font-size: 1em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.appointment-button {
+    padding: 10px 20px;
+    background-color: #9c27b0;
+    color: #ffffff; /* Default color for button text */
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block; /* Ensure it behaves like a button */
+    text-align: center; /* Center the text inside the button */
+}
+
+.appointment-button a {
+    color: #ffffff; /* Set the link color to white */
+    text-decoration: none; /* Remove underline from the link */
+}
+
+.appointment-button:hover {
+    background-color: #7a1c8a;
+}
+
+.appointment-button a:hover {
+    color: #ffffff; /* Ensure link color stays white even on hover */
+}
+
+
+.profile-image {
+    flex: 0.5;
+    position: relative;
+    max-width: 400px;  /* Ensure the image does not grow too large */
+    margin-left: 50px;  /* Move the image to the right side */
+    border-radius: 10px;
+}
+
+.profile-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Gradient overlay */
+.profile-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.1));
+    border-radius: 10px;
+    z-index: 1;
+}
+@media (max-width: 768px) {
+    .doctor-profile {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-content {
+        padding-right: 0;
+    }
+
+    .profile-image img {
+        max-width: 150px;
+        margin-top: 20px;
+    }
+}
+.welcome-section {
+    display: flex; /* Use flexbox to align the child divs */
+    justify-content: space-between;
+    padding: 40px 0px;
+    max-width: 1000px;
+    margin: 6%;
+}
+
+.welcome-section h2 {
+    color: #4a007d;
+    font-size: 28px;
+}
+
+.welcome-section h3 {
+    color: #9c27b0;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.welcome-section p {
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.welcome-section button {
+    background-color: #9c27b0;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.welcome-section .image-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.welcome-section .image-container img {
+    /* border: 5px solid #9c27b0; */
+    border-radius: 10px;
+    width: 400px; /* Keep the image width to fill the container */
+    height: 400px; 
+    margin-left: 120px;
+   
+}
+
+.treatments-section {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.treatments-section h2 {
+    color: #4a007d;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.treatment-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 350px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.card p {
+    font-size: 16px;
+    color: #1a1a2e;
+    font-weight: bold;
+    padding: 15px;
+}
+
+/* Hover effect */
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+.blog-section {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.blog-section h2 {
+    color: #4a007d;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.blog-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card1 {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 300px;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.card1 img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.card1-content {
+    padding: 15px;
+}
+
+.card1-content h3 {
+    color: #4a007d;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.card1-content p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Hover effect */
+.card1:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+.footer-section {
+    background-color: #0d1c38;
+    color: #fff;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-section .container {
+    display: flex;
+    max-width: 1000px;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.footer-section .about, 
+.footer-section .treatments, 
+.footer-section .contact {
+    flex: 1;
+}
+
+.footer-section h2 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #9c27b0;
+}
+
+.footer-section p, 
+.footer-section ul, 
+.footer-section li {
+    font-size: 1em;
+    line-height: 1.5;
+    color: #ccc;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section li {
+    margin-bottom: 5px;
+}
+
+.footer-section .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-section .contact-info p {
+    display: flex;
+    align-items: center;
+}
+
+.footer-section .contact-info img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+/* Footer Responsiveness */
+@media (max-width: 768px) {
+    .footer-section .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-section .about, 
+    .footer-section .treatments, 
+    .footer-section .contact {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+</style>
 <body>
-    
+    <!-- Header -->
     <header>
-        <nav class="navbar">
-            <div class="logo">
-                <h1>
-                    
-                    <img src="{% static 'images/logo.png' %}" alt="Child Vaccination">
-                </h1>
-            </div>
-            <ul class="nav-links">
-                <li><a href="home">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Doctors</a></li>
-                <li><a href="#">Services</a></li>
-                {% comment %} <li><a href="#">Pages</a></li> {% endcomment %}
-                {% comment %} <li><a href="#">Blogs</a></li> {% endcomment %}
-                <li><a href="#">Contact Us</a></li>
-               
-            </ul>
-            <a href="login" class="appointment-btn">Login</a>
-        </nav>
+        <div class="logo">
+            <img src="static/images/logo.jpg" alt="Child Health Clinic Logo">
+            <h1>ChildVax</h1>
+            
+        </div>
+        
+        
+        
+        
     </header>
 
-    <section class="hero">
-        <div class="hero-text">
-            <h1>We Provide <span class="highlight">Medical</span> Services That You Can Trust!</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed nisl pellentesque, faucibus libero eu, gravida quam.</p>
-            <div class="hero-buttons">
-                <a href="#" class="btn-primary">Get Appointment</a>
-                <a href="#" class="btn-secondary">About Us</a>
-            </div>
+    <!-- Main Content -->
+
+    <section class="doctor-profile">
+        <div class="profile-content">
+            <h2 class="clinic-name">CHILD HEALTH CLINIC</h2>
+            <h1 class="doctor-name">Dr. Sitha Lekshmi</h1>
+            <p class="doctor-details">
+                Senior Consultant – Pediatrician<br>
+                Managing Director at Child Health Clinic<br>
+                Experience: 19+ Years
+            </p>
+            <!-- <button class="appointment-button">BOOK APPOINTMENT</button> -->
+            <button class="appointment-button">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'bookup' %}" class="appointment-btn">BOOK APPOINTMENT</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="appointment-btn">LOGIN YOUR ACCOUNT</a>
+                {% endif %}
+            </button>
+                
+            
         </div>
-        <div class="hero-image">
-            <img src="{% static 'images/slider.jpg' %}" alt="Doctor">
+        <div class="profile-image">
+            <img src="static/images/doctor.jpg" alt="Newborn Care">
+        </div>
+    </section>
+    <section class="welcome-section">
+        <div>
+            <h2>Welcome to CHILD HEALTH CLINIC</h2>
+        <h3>BEST CHILD CLINIC IN CHANGARAMKULAM</h3>
+        <p>
+            CHILD HEALTH CLINIC was founded by Dr. Pankaj Mehta (pediatrician, child specialist & neonatologist) and was established in 2010 with the aim to provide personalized care and best treatments to all the children at affordable cost.
+        </p>
+        <p>
+            CHILD HEALTH CLINIC is one of the pioneers and the most reputed leading child health care centres in Gurgaon trusted by many parents/patients across India and is well equipped with all the childcare-related needs. This clinic has 2 locations in Gurgaon, one is in sector 69 and the other is in sector 9A.
+        </p>
+        <button>READ MORE</button>
+        </div>
+        
+        <div class="image-container">
+            <img src="static/images/breadcrumb.png" alt="Child Health Clinic Logo">
         </div>
     </section>
 
-    <div class="container">
-        <a href="#emergency-details" class="box">
-            <h2>Emergency Cases</h2>
-            <p>Lorem ipsum sit amet consectetur adipiscing elit.</p>
-            <span>Learn More</span>
-        </a>
-        <a href="#doctors-details" class="box">
-            <h2>Doctors Timetable</h2>
-            <p>Lorem ipsum sit amet consectetur adipiscing elit.</p>
-            <span>Learn More</span>
-        </a>
-        <a href="#hours-details" class="box">
-            <h2>Opening Hours</h2>
-            <p>Monday - Friday: 8.00-20.00</p>
-            <span>Learn More</span>
-        </a>
-    </div>
-
-    <div class="details" id="emergency-details">
-        <h3>Emergency Cases Details</h3>
-        <p>More information about emergency cases and how to handle them.</p>
-        <a href="#">Close</a>
-    </div>
-
-    <div class="details" id="doctors-details">
-        <h3>Doctors Timetable Details</h3>
-        <p>Details about the availability of doctors.</p>
-        <a href="#">Close</a>
-    </div>
-
-    <div class="details" id="hours-details">
-        <h3>Opening Hours Details</h3>
-        <p>Details about the clinic's opening hours.</p>
-        <a href="#">Close</a>
-    </div>
-    <!-- Services Section -->
-<section class="services">
-    <div class="container">
-        <h2 class="title">We Are Always Ready To Help You & Your Family</h2>
-        <p class="subtitle">Lorem ipsum dolor sit amet consectetur adipisicing elit praesent aliquet pretium.</p>
-
-        <div class="service-items">
-            <div class="service-item">
-                <div class="service-icon">
-                    <img src="https://img.icons8.com/ios-filled/50/007BFF/ambulance.png" alt="Emergency Help Icon">
-                </div>
-                <h3>Emergency Help</h3>
-                <p>Lorem ipsum sit amet, consectetur adipiscing elit. Maecenas mi quam vulputate.</p>
+    <section class="treatments-section">
+        <h2>Our Treatments</h2>
+        <div class="treatment-cards">
+            <div class="card">
+                <img src="static/images/newborn-care.jpg" alt="Newborn Care">
+                <p>Newborn Care</p>
             </div>
-
-            <div class="service-item">
-                <div class="service-icon">
-                    <img src="https://img.icons8.com/ios-filled/50/007BFF/pharmacy.png" alt="Pharmacy Icon">
-                </div>
-                <h3>Enriched Pharmacy</h3>
-                <p>Lorem ipsum sit amet, consectetur adipiscing elit. Maecenas mi quam vulputate.</p>
+            <div class="card">
+                <img src="static/images/child-vaccination.jpg" alt="Child Vaccination">
+                <p>Child Vaccination</p>
             </div>
-
-            <div class="service-item">
-                <div class="service-icon">
-                    <img src="https://img.icons8.com/ios-filled/50/007BFF/stethoscope.png" alt="Medical Treatment Icon">
+            <div class="card">
+                <img src="static/images/child-growth.jpg" alt="Child Growth & Development">
+                <p>Child Growth & Development</p>
+            </div>
+            
+        </div>
+    </section>
+    <section class="blog-section">
+        <h2>Latest Blog & News</h2>
+        <div class="blog-cards">
+            <div class="card1">
+                <img src="static/images/blog1 (1).jpg" alt="Basic tips about Autism">
+                <div class="card1-content">
+                    <h3>Basic tips about Autism</h3>
+                    <p>Autistic spectrum disorder (ASD) is a range of complex neurodevelopment disorders, characterized by social impairments, communication difficulties.</p>
                 </div>
-                <h3>Medical Treatment</h3>
-                <p>Lorem ipsum sit amet, consectetur adipiscing elit. Maecenas mi quam vulputate.</p>
+            </div>
+            <div class="card1">
+                <img src="static/images/blog2 (1).jpg" alt="Symptoms of Autism">
+                <div class="card1-content">
+                    <h3>Symptoms of Autism</h3>
+                    <p>Today, I'm going to talk briefly about autism which is very commonly seen nowadays in children. I would like to tell you what are the common symptoms.</p>
+                </div>
+            </div>
+            <div class="card1">
+                <img src="static/images/blog3 (1).jpg" alt="Iron Deficiency in Children">
+                <div class="card1-content">
+                    <h3>Iron Deficiency in Children</h3>
+                    <p>Iron deficiency is a common condition in children. It occurs when there is a scarcity of iron in the child's system due to malnutrition.</p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
-
-<!-- Pricing Section -->
-<div class="pricing-section">
-    <div class="pricing-card">
-        <div class="icon">
-            <img src="https://img.icons8.com/ios/50/000000/scissors.png" alt="Plastic Surgery">
+    </section>
+    <footer class="footer-section">
+        <div class="container">
+            <div class="about">
+                <h2>About CHILD HEALTH CLINIC</h2>
+                <p>CHILD HEALTH CLINIC was founded by Dr. Pankaj Mehta (pediatrician, child specialist & neonatologist) and was established in 2010 with the aim to provide personalized care and best treatments to all the children at affordable cost.</p>
+            </div>
+            <div class="treatments">
+                <h2>Treatments</h2>
+                <ul>
+                    <li>Newborn Care</li>
+                    <li>Child Vaccination</li>
+                    <li>Nebulizations</li>
+                    <li>School Health</li>
+                    <li>Adolescent Health</li>
+                    <li>Psychosocial Issues</li>
+                    <li>Immunizations</li>
+                    <li>Health Issues</li>
+                    <li>Asthma Management</li>
+                    <li>Genetic Disorders</li>
+                    <li>Congenital Disorders</li>
+                    <li>Newborn Jaundice</li>
+                    <li>Nutrition Assessment</li>
+                    <li>Child Growth</li>
+                </ul>
+            </div>
+            <div class="contact">
+                <h2>Contact Us</h2>
+                <p><strong>CHILD HEALTH CLINIC (Sector 69, Gurgaon)</strong><br>
+                   110-F, Spaze Corporate Parkk, Tulip Chowk, Sector 69, Gurugram, Haryana-122001</p>
+                <p><strong>CHILD HEALTH CLINIC (Sector 9A, Gurgaon)</strong><br>
+                   843, Sector 9A, Near ESIC Hospital Gurugram, Haryana-122001</p>
+                <div class="contact-info">
+                    <p><img src="phone-icon.png" alt="Phone Icon"> +91-9582714813</p>
+                    <p><img src="email-icon.png" alt="Email Icon"> mehta.pankaj@gmail.com</p>
+                </div>
+            </div>
         </div>
-        <h3>Plastic Surgery</h3>
-        <h2>$199 <span>/ Per Visit</span></h2>
-        <ul>
-            <li>✔ Lorem Ipsum Dolor Sit</li>
-            <li>✔ Cubitur Sollicitudin Fentum</li>
-            <li>✘ Nullam Interdum Enim</li>
-            <li>✘ Donec Ultricies Metus</li>
-            <li>✘ Pellentesque Eget Nibh</li>
-        </ul>
-        <a href="#" class="btn">Book Now</a>
-    </div>
-
-    <div class="pricing-card">
-        <div class="icon">
-            <img src="https://img.icons8.com/ios/50/000000/tooth.png" alt="Teeth Whitening">
-        </div>
-        <h3>Teeth Whitening</h3>
-        <h2>$299 <span>/ Per Visit</span></h2>
-        <ul>
-            <li>✔ Lorem Ipsum Dolor Sit</li>
-            <li>✔ Cubitur Sollicitudin Fentum</li>
-            <li>✔ Nullam Interdum Enim</li>
-            <li>✘ Donec Ultricies Metus</li>
-            <li>✘ Pellentesque Eget Nibh</li>
-        </ul>
-        <a href="#" class="btn">Book Now</a>
-    </div>
-
-    <div class="pricing-card">
-        <div class="icon">
-            <img src="https://img.icons8.com/ios/50/000000/heart-health.png" alt="Heart Surgery">
-        </div>
-        <h3>Heart Surgery</h3>
-        <h2>$399 <span>/ Per Visit</span></h2>
-        <ul>
-            <li>✔ Lorem Ipsum Dolor Sit</li>
-            <li>✔ Cubitur Sollicitudin Fentum</li>
-            <li>✔ Nullam Interdum Enim</li>
-            <li>✔ Donec Ultricies Metus</li>
-            <li>✔ Pellentesque Eget Nibh</li>
-        </ul>
-        <a href="#" class="btn">Book Now</a>
-    </div>
-</div>
-
+    </footer>
+    
 </body>
 </html>

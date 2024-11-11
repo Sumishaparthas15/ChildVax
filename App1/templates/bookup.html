@@ -8,42 +8,117 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #WHITE;
+            background-color: WHITE;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px;
-            background-color: #5a2a82;
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .sidebar h3 {
-            color: #fff;
-            margin-bottom: 20px;
-        }
-        .sidebar a {
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            display: block;
-            width: 100%;
-            text-align: center;
-            margin: 5px 0;
-        }
-        .sidebar a:hover {
-            background-color: #4e2371;
-        }
-        .container {
+                /* Navbar */
+        /* Navbar styles */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #5a2a82;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s;
+    transform: translateX(-100%);
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    to { transform: translateX(0); }
+}
+
+/* Sidebar Header */
+.sidebar-header h3 {
+    color: #fff;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+/* User Info Section */
+.user-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 10px;
+    width: 90%;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.user-info span {
+    display: block;
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.profile-button {
+    display: inline-block;
+    color: #fff;
+    background-color: #4e2371;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.profile-button:hover {
+    background-color: #3d1d63;
+}
+
+/* Sidebar Links */
+.sidebar-links {
+    width: 100%;
+}
+
+.sidebar-links a {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 20px;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 8px 0;
+    transition: background-color 0.3s, transform 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-links a:hover {
+    background-color: #4e2371;
+    transform: translateX(10px);
+}
+
+/* White Stroke/Underline for Links */
+.sidebar-links a::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin: auto;
+    opacity: 0.7;
+    transition: transform 0.2s;
+}
+
+.sidebar-links a:hover::after {
+    transform: scaleX(1.1);
+}
+
+.container {
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -51,8 +126,6 @@
             width: 800px;
             max-width: 700px;
             margin: 20px auto;
-            margin-left: 520px;
-            margin-top: 50px;
         }
         .container h1 {
             text-align: center;
@@ -105,16 +178,26 @@
 <body>
     <nav class="navbar">
         <div class="sidebar">
-            <h3>Navigation</h3>
-            <a href="{% url 'bookup' %}">Book Up</a>
-            <a href="{% url 'about' %}">About</a>
-            <a href="{% url 'profile' %}">Profile</a>
-            <a href="{% url 'history' %}">Op History</a>
-           
-            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                {% csrf_token %}
-            </form>
-            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <div class="sidebar-header">
+                <h3>ChildVax</h3>
+            </div>
+            
+            <div class="user-info">
+                <span>Hi, {{ user.username }}</span>
+                <a href="{% url 'profile' %}" class="profile-button">View Profile</a>
+            </div>
+            
+            <div class="sidebar-links">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'bookup' %}">Book Up</a>
+                <a href="{% url 'about' %}">About</a>
+                <a href="{% url 'history' %}">Op History</a>
+                
+                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            </div>
         </div>
     </nav>
     <div class="container">
@@ -139,56 +222,60 @@
                 <label for="vaccination">Vaccinations</label>
                 <select id="vaccination" name="vaccination">
                     <option value="">Select Vaccine</option>
-            
-                    <!-- Hepatitis B (HBV) -->
-                    <option value="hepatitis_b_dose_1">Hepatitis B (HBV) - 1st dose (Birth)</option>
-                    <option value="hepatitis_b_dose_2">Hepatitis B (HBV) - 2nd dose (1-2 months)</option>
-                    <option value="hepatitis_b_dose_3">Hepatitis B (HBV) - 3rd dose (6-12 months)</option>
-            
-                    <!-- Rotavirus (RV) -->
-                    <option value="rotavirus_dose_1">Rotavirus (RV) - 1st dose (2 months)</option>
-                    <option value="rotavirus_dose_2">Rotavirus (RV) - 2nd dose (4 months)</option>
-                    <option value="rotavirus_dose_3">Rotavirus (RV) - 3rd dose (6 months)</option>
-            
-                    <!-- Diphtheria, Tetanus, & Pertussis (DTaP) -->
-                    <option value="dtap_dose_1">Diphtheria, Tetanus, & Pertussis (DTaP) - 1st dose (2 months)</option>
-                    <option value="dtap_dose_2">Diphtheria, Tetanus, & Pertussis (DTaP) - 2nd dose (4 months)</option>
-                    <option value="dtap_dose_3">Diphtheria, Tetanus, & Pertussis (DTaP) - 3rd dose (6 months)</option>
-                    <option value="dtap_dose_4">Diphtheria, Tetanus, & Pertussis (DTaP) - 4th dose (15-18 months)</option>
-                    <option value="dtap_dose_5">Diphtheria, Tetanus, & Pertussis (DTaP) - 5th dose (4-6 years)</option>
-            
-                    <!-- Haemophilus influenzae type b (Hib) -->
-                    <option value="hib_dose_1">Haemophilus influenzae type b (Hib) - 1st dose (2 months)</option>
-                    <option value="hib_dose_2">Haemophilus influenzae type b (Hib) - 2nd dose (4 months)</option>
-                    <option value="hib_dose_3">Haemophilus influenzae type b (Hib) - 3rd dose (6 months)</option>
-                    <option value="hib_dose_4">Haemophilus influenzae type b (Hib) - 4th dose (12-15 months)</option>
-            
-                    <!-- Pneumococcal Conjugate (PCV13) -->
-                    <option value="pcv13_dose_1">Pneumococcal Conjugate (PCV13) - 1st dose (2 months)</option>
-                    <option value="pcv13_dose_2">Pneumococcal Conjugate (PCV13) - 2nd dose (4 months)</option>
-                    <option value="pcv13_dose_3">Pneumococcal Conjugate (PCV13) - 3rd dose (6 months)</option>
-                    <option value="pcv13_dose_4">Pneumococcal Conjugate (PCV13) - 4th dose (12-15 months)</option>
-            
-                    <!-- Inactivated Poliovirus (IPV) -->
-                    <option value="ipv_dose_1">Inactivated Poliovirus (IPV) - 1st dose (2 months)</option>
-                    <option value="ipv_dose_2">Inactivated Poliovirus (IPV) - 2nd dose (4 months)</option>
-                    <option value="ipv_dose_3">Inactivated Poliovirus (IPV) - 3rd dose (6-18 months)</option>
-                    <option value="ipv_dose_4">Inactivated Poliovirus (IPV) - 4th dose (4-6 years)</option>
-            
-                    <!-- Measles, Mumps, & Rubella (MMR) -->
-                    <option value="mmr_dose_1">Measles, Mumps, & Rubella (MMR) - 1st dose (12-15 months)</option>
-                    <option value="mmr_dose_2">Measles, Mumps, & Rubella (MMR) - 2nd dose (4-6 years)</option>
-            
-                    <!-- Varicella (Chickenpox) -->
-                    <option value="varicella_dose_1">Varicella - 1st dose (12-15 months)</option>
-                    <option value="varicella_dose_2">Varicella - 2nd dose (4-6 years)</option>
-            
-                    <!-- Influenza (Flu) -->
-                    <option value="influenza_annual">Influenza (Flu) - Annual dose (Starting at 6 months)</option>
-            
-                    <!-- Meningococcal -->
-                    <option value="meningococcal_dose_1">Meningococcal - 1st dose (11-12 years)</option>
-                    <option value="meningococcal_dose_2">Meningococcal - 2nd dose (16 years)</option>
+                    
+                    <!-- Birth -->
+                    <option value="birth_vaccines">Birth Vaccines: Hepatitis B (1st dose)</option>
+                    
+                    <!-- 1-2 months -->
+                    <option value="1_2_months_vaccines">1-2 Months Vaccines: Hepatitis B (2nd dose)</option>
+                    
+                    <!-- 2 months -->
+                    <option value="2_months_vaccines">
+                        2 Months Vaccines: 
+                        Rotavirus (1st dose), DTaP (1st dose), Hib (1st dose), PCV13 (1st dose), IPV (1st dose)
+                    </option>
+                    
+                    <!-- 4 months -->
+                    <option value="4_months_vaccines">
+                        4 Months Vaccines: 
+                        Rotavirus (2nd dose), DTaP (2nd dose), Hib (2nd dose), PCV13 (2nd dose), IPV (2nd dose)
+                    </option>
+                    
+                    <!-- 6 months -->
+                    <option value="6_months_vaccines">
+                        6 Months Vaccines: 
+                        Hepatitis B (3rd dose), Rotavirus (3rd dose), DTaP (3rd dose), Hib (3rd dose), PCV13 (3rd dose), IPV (3rd dose), Influenza (Annual)
+                    </option>
+                    
+                    <!-- 12-15 months -->
+                    <option value="12_15_months_vaccines">
+                        12-15 Months Vaccines: 
+                        Hib (4th dose), PCV13 (4th dose), MMR (1st dose), Varicella (1st dose)
+                    </option>
+                    
+                    <!-- 15-18 months -->
+                    <option value="15_18_months_vaccines">
+                        15-18 Months Vaccines: 
+                        DTaP (4th dose)
+                    </option>
+                    
+                    <!-- 4-6 years -->
+                    <option value="4_6_years_vaccines">
+                        4-6 Years Vaccines: 
+                        DTaP (5th dose), IPV (4th dose), MMR (2nd dose), Varicella (2nd dose)
+                    </option>
+                    
+                    <!-- 11-12 years -->
+                    <option value="11_12_years_vaccines">
+                        11-12 Years Vaccines: 
+                        Meningococcal (1st dose)
+                    </option>
+                    
+                    <!-- 16 years -->
+                    <option value="16_years_vaccines">
+                        16 Years Vaccines: 
+                        Meningococcal (2nd dose)
+                    </option>
                     
                 </select>
             </div>
@@ -235,6 +322,35 @@
             rzp1.open();
         }
     </script>
+    <!-- <script>
+        const dateField = document.getElementById('date');
+        const messageField = document.getElementById('token-limit-message');
+        const submitButton = document.getElementById('rzp-button');
+    
+        dateField.addEventListener('change', function() {
+            const selectedDate = dateField.value;
+            if (!selectedDate) return;
+    
+            fetch(`/check_token_limit/?date=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        messageField.textContent = data.error;
+                        messageField.style.display = "block";
+                        submitButton.disabled = true;
+                    } else if (data.token_count >= 8) {
+                        messageField.textContent = "All tokens for the selected day are booked. Please choose another day.";
+                        messageField.style.display = "block";
+                        submitButton.disabled = true;
+                    } else {
+                        messageField.style.display = "none";
+                        submitButton.disabled = false;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script> -->
+
     <script>
         const dateField = document.getElementById('date');
         const messageField = document.getElementById('token-limit-message');
@@ -262,6 +378,30 @@
                 })
                 .catch(error => console.error('Error:', error));
         });
+
+        document.getElementById('rzp-button').onclick = function(e) {
+            e.preventDefault();
+            var options = {
+                "key": "rzp_test_d5VCv4MOwkIpcU",
+                "amount": 70000,
+                "currency": "INR",
+                "name": "Child Vaccination",
+                "description": "Appointment Fee",
+                "handler": function (response) {
+                    document.getElementById('booking-form').submit();
+                },
+                "prefill": {
+                    "name": "sreaya vr",
+                    "email": "sreayarajan75@gmail.com",
+                    "contact": "8078747080"
+                },
+                "theme": {
+                    "color": "#5a2a82"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        }
     </script>
     
 </body>

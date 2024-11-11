@@ -20,7 +20,7 @@ urlpatterns = [
     path('history', views.history, name='history'),
     path('cancel_booking/<int:booking_id>/', cancel_booking, name='cancel_booking'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('forgetpassword', views.forgetpassword, name='forgetpassword'),
+    # path('forgetpassword', views.forgetpassword, name='forgetpassword'),
     
     
     
@@ -32,10 +32,21 @@ urlpatterns = [
     path('patients/toggle_block/<int:patient_id>/', toggle_block_patient, name='toggle_block_patient'),
     path('patients/<int:patient_id>/', views.patient_details, name='patient_details'),
     path('bookings/', views.bookings, name='bookings'), 
+    path('filter_bookings/', views.filter_bookings, name='filter_bookings'), 
+    
     path('update_booking_status/', update_booking_status, name='update_booking_status'),
     path('admin_logout/', views.admin_logout, name='admin_logout'),
     path('notification/', views.notification, name='notification'),
     path('refund/', refund_booking, name='refund_booking'),
+    # path('refund/<int:booking_id>/', refund_booking1, name='refund_booking1'),
+    path('refund/<int:booking_id>/', views.process_refund, name='refund'),
+
+    path('leave/', views.leave, name='leave'),
+    path('add_leave/', views.add_leave, name='add_leave'),
+    path('leave/<int:leave_id>/details/', views.leave_details, name='leave_details')
+
+
+
 ]
  
  

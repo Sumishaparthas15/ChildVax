@@ -10,32 +10,109 @@
             font-family: Arial, sans-serif;
             display: flex;
         }
-        .sidebar {
-            height: 100vh;
-            width: 250px;
-            background-color: #5a2a82;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
-        }
-        .sidebar h3 {
-            color: #fff;
-            margin-bottom: 20px;
-        }
-        .sidebar a {
-            padding: 15px 20px;
-            text-decoration: none;
-            font-size: 18px;
-            color: white;
-            display: block;
-            text-align: center;
-            width: 100%;
-            margin: 5px 0;
-        }
-        .sidebar a:hover {
-            background-color: #4e2371;
-        }
+                /* Navbar */
+        /* Navbar styles */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #5a2a82;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s;
+    transform: translateX(-100%);
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    to { transform: translateX(0); }
+}
+
+/* Sidebar Header */
+.sidebar-header h3 {
+    color: #fff;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+/* User Info Section */
+.user-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 10px;
+    width: 90%;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.user-info span {
+    display: block;
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.profile-button {
+    display: inline-block;
+    color: #fff;
+    background-color: #4e2371;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.profile-button:hover {
+    background-color: #3d1d63;
+}
+
+/* Sidebar Links */
+.sidebar-links {
+    width: 100%;
+}
+
+.sidebar-links a {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 20px;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 8px 0;
+    transition: background-color 0.3s, transform 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-links a:hover {
+    background-color: #4e2371;
+    transform: translateX(10px);
+}
+
+/* White Stroke/Underline for Links */
+.sidebar-links a::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin: auto;
+    opacity: 0.7;
+    transition: transform 0.2s;
+}
+
+.sidebar-links a:hover::after {
+    transform: scaleX(1.1);
+}
+
         .content {
             flex-grow: 1;
             padding: 20px;
@@ -96,19 +173,29 @@
 </head>
 <body>
     <nav class="navbar">
-    <div class="sidebar">
-        <h3>Navigation</h3>
-        <a href="{% url 'bookup' %}">Book Up</a>
-        <a href="{% url 'about' %}">About</a>
-        <a href="{% url 'profile' %}">Profile</a>
-        <a href="{% url 'history' %}">Op History</a>
-       
-        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-            {% csrf_token %}
-        </form>
-        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-    </div>
-</nav>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>ChildVax</h3>
+            </div>
+            
+            <div class="user-info">
+                <span>Hi, {{ user.username }}</span>
+                <a href="{% url 'profile' %}" class="profile-button">View Profile</a>
+            </div>
+            
+            <div class="sidebar-links">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'bookup' %}">Book Up</a>
+                <a href="{% url 'about' %}">About</a>
+                <a href="{% url 'history' %}">Op History</a>
+                
+                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            </div>
+        </div>
+    </nav>
     <div class="content">
         <div class="container">
             <h2>Welcome, {{ user.username }}</h2>
@@ -165,7 +252,6 @@
                         </td>
                     </tr>
                     <tr>
-                        
                         <td>DATE OF BIRTH</td>
                         <td>
                             <span class="display-value">{{ user.date_of_birth }}</span>
@@ -173,38 +259,32 @@
                             <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
                             <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
                             <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
-                         </td>
-                  </tr>
-                     <form method="post" action="{% url 'profile_edit' %}">  <!-- Updated with your view URL -->
-                        {% csrf_token %}
+                        </td>
+                    </tr>
+                    <tr>
                         <td>GENDER</td>
                         <td>
                             <span class="display-value">{{ user.gender }}</span>
-                            <div class="edit-input hidden gender-box">
-                                <label>
-                                    <select name="gender">
-                                        <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
-                                        <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
-                                        <option value="other" {% if user.gender == 'other' %}selected{% endif %}>Other</option>
-                                    </select>
-                                </label>
-                            </div>
+                            <select name="gender" class="edit-input hidden">
+                                <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
+                                <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
+                                <option value="other" {% if user.gender == 'other' %}selected{% endif %}>Other</option>
+                            </select>
                             <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
-                            <button type="submit" class="save-button hidden">Save</button>
+                            <button type="button" class="save-button hidden" onclick="saveChanges(this)">Save</button>
                             <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
                         </td>
-                    </form>
-                    
+                    </tr>
                     <tr>
                         <td>DISABILITY</td>
                         <td>
                             <span class="display-value">{{ user.disability }}</span>
-                            <div class="edit-input hidden">
-                                <label><input type="radio" name="disability" value="yes" onchange="toggleDisabilityDescription(this)"> Yes</label>
-                                <label><input type="radio" name="disability" value="no" onchange="toggleDisabilityDescription(this)"> No</label>
-                            </div>
+                            <select name="disability" class="edit-input hidden" onchange="toggleDisabilityDescription(this)">
+                                <option value="no" {% if not user.disability %}selected{% endif %}>No</option>
+                                <option value="yes" {% if user.disability %}selected{% endif %}>Yes</option>
+                            </select>
                             <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
-                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <button type="button" class="save-button hidden" onclick="saveChanges(this)">Save</button>
                             <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
                         </td>
                     </tr>
@@ -214,22 +294,20 @@
                             <span class="display-value">{{ user.disability_description }}</span>
                             <input type="text" name="disability_description" class="edit-input hidden" value="{{ user.disability_description }}">
                             <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
-                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <button type="button" class="save-button hidden" onclick="saveChanges(this)">Save</button>
                             <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
                         </td>
-                    </tr>   
+                    </tr>
                     <tr>
                         <td>UPI NUMBER</td>
                         <td>
                             <span class="display-value">{{ user.upi_number }}</span>
                             <input type="text" name="upi_number" class="edit-input hidden" value="{{ user.upi_number }}">
                             <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
-                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <button type="button" class="save-button hidden" onclick="saveChanges(this)">Save</button>
                             <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
                         </td>
                     </tr>
-                     
-                    
                 </tbody>
             </table>
         </div> 
@@ -258,18 +336,19 @@
             const input = td.querySelector('.edit-input');
             const displayValue = td.querySelector('.display-value');
             const fieldName = input.name;
+            const csrfToken = '{{ csrf_token }}';  // Django CSRF token
 
             // Prepare data for AJAX request
             const data = {
                 [fieldName]: input.value
             };
 
-            // Make AJAX request
+            // Make AJAX request to save data
             fetch('/profile/edit/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}' // Ensure CSRF token is included
+                    'X-CSRFToken': csrfToken
                 },
                 body: JSON.stringify(data)
             })

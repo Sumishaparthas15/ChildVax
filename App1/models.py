@@ -42,3 +42,11 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"{self.patient.child_name} - {self.vaccinations} on {self.appointment_date}"
+    
+
+class Leave(models.Model):
+    date = models.DateField()
+    reason = models.TextField()
+
+    def __str__(self):
+        return f"Leave on {self.date}: {self.reason}"    

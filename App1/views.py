@@ -35,23 +35,24 @@ def home(request):
 
 
 
-
 def register(request):
     print("Request method:", request.method)  # Debug print
     if request.method == 'POST':
-        form = ProfileRegistrationForm(request.POST)
-        if form.is_valid():
-            print("Form is valid")  # Debug print
-            form.save()
-            messages.success(request, 'Registration successful. You can now log in.')
-            return redirect('login')
-        else:
-            print("Form errors:", form.errors)  # Debug print
-            messages.error(request, 'There was an error in your registration. Please try again.')
-    else:
-        form = ProfileRegistrationForm()
-    
-    return render(request, 'register.html', {'form': form})
+        # Retrieve form data directly
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone_number')
+        password1 = request.POST.get('password1')
+        
+        # Directly create and save the new user (bypassing validation)
+        user = Profile.objects.create_user(username=username, email=email, password=password1, phone_number=phone_number)
+        
+        # Notify the user of a successful registration
+        messages.success(request, 'Registration successful. You can now log in.')
+        return redirect('login')
+
+
+    return render(request, 'register.html')
 
 def user_login(request):
     if request.method == 'POST':
@@ -123,19 +124,39 @@ def profile_edit_view(request):
         'date_of_birth': user.date_of_birth,
         'disability': user.disability,
         'disability_description': user.disability_description,
-        'upi_number': user.upi_number,  # Include upi_number in the response
+        'upi_number': user.upi_number, 
     })
+    
 def bookup(request):
         return render(request, 'bookup.html')
+
 def check_token_limit(request):
     date_str = request.GET.get('date')
     if date_str:
         date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
-        if date_obj < date.today():  # Check if the selected date is in the past
+        
+        # Check if the selected date is in the past
+        if date_obj < date.today():
             return JsonResponse({'error': 'You cannot select a past date for booking.'}, status=400)
         
+        # Check if the selected date is on a weekend (Saturday or Sunday)
+        if date_obj.weekday() >= 5:
+            return JsonResponse({'error': 'Bookings cannot be made on weekends (Saturday and Sunday).'}, status=400)
+        
+        # Check if the selected date is a leave day
+        leave_objects = Leave.objects.filter(date=date_obj)
+        if leave_objects.exists():
+            # Retrieve the first leave reason if multiple entries are found
+            leave_reason = leave_objects.first().reason
+            return JsonResponse({'error': f'Bookings cannot be made on this date. '}, status=400)
+        
+        # Check token limit for the selected date
         token_count = Booking.objects.filter(appointment_date=date_obj).count()
+        if token_count >= 8:
+            return JsonResponse({'token_count': token_count, 'error': 'All tokens for the selected day are booked. Please choose another day.'})
+        
         return JsonResponse({'token_count': token_count})
+    
     return JsonResponse({'error': 'Invalid date'}, status=400)
 
 class BookingCreateView(View):
@@ -275,7 +296,7 @@ def  patient_details(request, patient_id):
 
 def bookings(request):
     bookings_list = Booking.objects.all().order_by('appointment_date')
-    paginator = Paginator(bookings_list, 6)
+    paginator = Paginator(bookings_list, 5)
 
     # Get the current page number from the request (default to 1 if not specified)
     page_number = request.GET.get('page', 1)
@@ -284,6 +305,18 @@ def bookings(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'adminside/bookings.html', {'page_obj': page_obj})
+def filter_bookings(request):
+    status = request.GET.get('status', '')
+    bookings = Booking.objects.all()
+
+    if status:
+        bookings = bookings.filter(status=status)
+
+    paginator = Paginator(bookings, 10)  # Show 10 bookings per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'adminside/bookings.html', {'page_obj': page_obj, 'status': status})
 @require_POST
 def update_booking_status(request):
     booking_id = request.POST.get('booking_id')
@@ -350,45 +383,97 @@ def refund_booking(request):
         messages.error(request, 'Booking not found.')
     
     return redirect('notification')
-def forgetpassword(request):
-     return render(request, 'forgetpassword.html')
-    # if request.method == 'POST':
-    #     email = request.POST.get('email')
-    #     if User.objects.filter(email=email).exists():
-    #         form = PasswordResetForm(request.POST)
-    #         if form.is_valid():
-    #             form.save(
-    #                 request=request,
-    #                 use_https=request.is_secure(),
-    #                 email_template_name='registration/password_reset_email.html',
-    #                 subject_template_name='registration/password_reset_subject.txt',
-    #             )
-    #         return render(request, 'forgetpassword.html', {'message': 'Password reset email has been sent.'})
-    #     else:
-    #         return render(request, 'forgetpassword.html', {'error': 'No user with this email address.'})
-    
+
+@require_POST
+def refund_booking1(request, booking_id):
+    try:
+        booking = Booking.objects.get(id=booking_id)
+
+        # Check if booking is refundable
+        if booking.status == 'Completed' or booking.status == 'Refunded':
+            return JsonResponse({'status': 'error', 'message': 'Booking cannot be refunded.'})
+
+        # Update the booking status to "Refunded"
+        booking.status = 'Refunded'
+        booking.save()
+
+        # Send email notification to the user
+        subject = 'Booking Refunded'
+        message = f'Dear {booking.patient.child_name},\n\nYour booking for {booking.vaccinations} on {booking.appointment_date} has been cancelled. The booking has been refunded successfully.\n\nThank you!'
+        recipient_email = booking.patient.email  # Adjust this field based on your model
+
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [recipient_email],
+            fail_silently=False,
+        )
+
+        # Return a success response
+        return JsonResponse({'status': 'success', 'message': 'Booking refunded successfully.'})
+
+    except Booking.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Booking not found.'})
+def process_refund(request, booking_id):
+    if request.method == 'POST':
+        try:
+            # Get the booking object using booking_id
+            booking = Booking.objects.get(id=booking_id)
+
+            # Check if the booking status allows a refund
+            if booking.status != 'Refunded' and booking.status != 'Completed':
+                # Refund logic: update the status and other relevant fields
+                booking.status = 'Refunded'
+                booking.save()
+
+                return JsonResponse({'status': 'success'}, status=200)
+
+            return JsonResponse({'status': 'error', 'message': 'Refund not applicable.'}, status=400)
+
+        except Booking.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Booking not found.'}, status=404)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405) 
+        
+         
+def leave(request):
+    # Ensure the leaves are being passed correctly to the template
+    leaves = Leave.objects.all().order_by('date')  # Ordering might help if you want to display in a specific order
+    return render(request, 'adminside/leave.html', {'leaves': leaves})
 
 
+def leave_details(request, leave_id):
+    try:
+        # Get the leave object using the leave_id
+        leave = Leave.objects.get(id=leave_id)
+        
+        # Query all bookings for that leave date
+        bookings = Booking.objects.filter(appointment_date=leave.date)
 
+        # Serialize the bookings to JSON (you could use custom fields if needed)
+        bookings_data = list(bookings.values('patient__child_name', 'vaccinations', 'appointment_date', 'status'))
 
+        # Return the bookings data as a JSON response
+        return JsonResponse({'bookings': bookings_data})
+    except Leave.DoesNotExist:
+        return JsonResponse({'error': 'Leave not found'}, status=404)
 
+def add_leave(request):
+    if request.method == "POST":
+        # Get data from the form
+        leave_date = request.POST.get('leave_date')
+        leave_reason = request.POST.get('leave_reason')
 
-# @login_required
-# def profile_edit_view(request):
-#     user = request.user
-#     if request.method == 'POST':
-#         form = ProfileForm(request.POST, instance=user)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Profile updated successfully!')
-#             return redirect('profile')
-#         else:
-#             messages.error(request, 'Please correct the errors below.')
-#     else:
-#         form = ProfileForm(instance=user)
+        # Create and save the new leave instance
+        leave = Leave(date=leave_date, reason=leave_reason)
+        leave.save()
 
-#     context = {
-#         'user': user,
-#         'form': form
-#     }
-#     return render(request, 'profile.html', context)
+        # Add a success message
+        messages.success(request, "Leave has been added successfully.")
+        
+        # Redirect back to the leave page to refresh the list
+        return redirect('leave')
+
+    # If the method is not POST, redirect to the leave page
+    return redirect('leave')

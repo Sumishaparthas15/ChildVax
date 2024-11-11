@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Management</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<style>
+    /* Global Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #ecf0f1;
+        display: flex;
+        height: 100vh;
+        flex-direction: column;
+    }
+
+    .top-menu {
+        background-color: #2c3e50;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        color: #ecf0f1;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .top-menu a {
+        text-decoration: none;
+        color: #ecf0f1;
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .top-menu a:hover, .top-menu a.active {
+        background-color: #34495e;
+    }
+
+    /* Container for Sidebar and Main Content */
+    .container {
+        display: flex;
+        flex: 1;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+        width: 250px;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        display: flex;
+        flex-direction: column;
+        padding-top: 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 1.8em;
+        color: #ecf0f1;
+        text-transform: uppercase;
+    }
+
+    .sidebar a {
+        padding: 15px 20px;
+        text-decoration: none;
+        color: #ecf0f1;
+        font-size: 1.1em;
+        transition: background 0.3s, padding 0.3s;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    .sidebar a:hover {
+        background-color: #34495e;
+        padding-left: 25px;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+        padding: 20px;
+        flex: 1;
+    }
+
+    .add-leave-btn {
+        background-color: #2980b9;
+        color: #ecf0f1;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        margin: 20px 0;
+        transition: background-color 0.3s;
+    }
+
+    .add-leave-btn:hover {
+        background-color: #3498db;
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    /* Modal Box */
+    .modal {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+        text-align: center;
+    }
+
+    /* Close Button */
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Leave List */
+    .leave-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    .leave-list li {
+        background: #ecf0f1;
+        padding: 20px;
+        width: calc(33.33% - 20px);
+        margin-bottom: 10px;
+        border-left: 5px solid #2980b9;
+        box-sizing: border-box;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .leave-list li {
+            width: calc(50% - 20px);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .leave-list li {
+            width: 100%;
+        }
+    }
+    #bookings-container {
+        margin-top: 20px;
+        text-align: left;
+        padding: 0 10px;
+        overflow-y: auto;
+    }
+
+    #bookings-container ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    #bookings-container li {
+        background-color: #f9f9f9;
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #2980b9;
+    }
+</style>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Child Vaccination</h2>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'patients' %}">Patients</a>
+            <a href="{% url 'bookings' %}">Bookings</a>
+            <a href="{% url 'notification' %}">Notification</a>
+            <a href="{% url 'leave' %}">Leave</a>
+            <a href="{% url 'admin_logout' %}">Logout</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1>Leave Management</h1>
+            <button class="add-leave-btn" onclick="openAddLeaveModal()">Add Leave</button>
+
+            <!-- Leave List -->
+            <h2>Your Leaves</h2>
+            <ul class="leave-list">
+                {% for leave in leaves %}
+                    <li>
+                        <strong>Date:</strong> {{ leave.date }}<br>
+                        <strong>Reason:</strong> {{ leave.reason }}
+                        <button onclick="viewBookings({{ leave.id }})">View Bookings</button>
+                    </li>
+                {% empty %}
+                    <li>No leaves have been recorded.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Leave -->
+    <div class="modal-overlay" id="add-leave-modal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeAddLeaveModal()">X</button>
+            <h3>Add Leave</h3>
+            <form action="{% url 'add_leave' %}" method="POST">
+                {% csrf_token %}
+                <label for="leave-date">Date:</label>
+                <input type="date" id="leave-date" name="leave_date" required>
+                
+                <label for="leave-reason">Reason:</label>
+                <textarea id="leave-reason" name="leave_reason" rows="3" required></textarea>
+                
+                <button type="submit" class="add-leave-btn">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Bookings -->
+    <div class="modal-overlay" id="view-bookings-modal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeViewBookingsModal()">X</button>
+            <h3>Bookings for Leave</h3>
+            <div id="bookings-container">
+                <!-- Bookings content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Modals and AJAX -->
+    <script>
+        // Open and close the Add Leave modal
+        function openAddLeaveModal() {
+            document.getElementById("add-leave-modal").style.display = "flex";
+        }
+
+        function closeAddLeaveModal() {
+            document.getElementById("add-leave-modal").style.display = "none";
+        }
+
+        // Open and close the View Bookings modal
+        function openViewBookingsModal() {
+            document.getElementById("view-bookings-modal").style.display = "flex";
+        }
+
+        function closeViewBookingsModal() {
+            document.getElementById("view-bookings-modal").style.display = "none";
+        }
+
+        // Fetch and display bookings for a particular leave
+//         function viewBookings(leaveId) {
+//     fetch(`/leave/${leaveId}/details/`)
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.bookings && data.bookings.length > 0) {
+//                 let bookingsHtml = "<ul>";
+//                 data.bookings.forEach(booking => {
+//                     bookingsHtml += `
+//                         <li>
+//                             <strong>Patient:</strong> ${booking.patient__child_name}<br>
+//                             <strong>Vaccination:</strong> ${booking.vaccinations}<br>
+//                             <strong>Status:</strong> ${booking.status}<br>
+//                     `;
+
+//                     // Check if booking ID exists and add the refund button conditionally
+//                     if (booking.id) {
+//                         if (booking.status !== 'Completed' && booking.status !== 'Refunded') {
+//                             bookingsHtml += `<strong><button class="refund-btn" onclick="location.href='/refund/${booking.id}/';">Refund</button></strong>`;
+//                         } else if (booking.status === 'Refunded') {
+//                             bookingsHtml += `<strong><button class="refund-btn" disabled>Refunded</button></strong>`;
+//                         }
+//                     } else {
+//                         console.error('Booking ID is missing for a booking entry.');
+//                     }
+
+//                     bookingsHtml += "</li>";
+//                 });
+//                 bookingsHtml += "</ul>";
+//                 document.getElementById("bookings-container").innerHTML = bookingsHtml;
+//             } else {
+//                 document.getElementById("bookings-container").innerHTML = "No bookings found for this leave date.";
+//             }
+//             openViewBookingsModal();
+//         })
+//         .catch(error => {
+//             console.error('Error fetching bookings:', error);
+//             document.getElementById("bookings-container").innerHTML = "Error fetching bookings.";
+//             openViewBookingsModal();
+//         });
+// }
+
+            // Fetch and display bookings for a particular leave
+            function viewBookings(leaveId) {
+    fetch(`/leave/${leaveId}/details/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.bookings && data.bookings.length > 0) {
+                let bookingsHtml = "<ul>";
+                data.bookings.forEach(booking => {
+                    bookingsHtml += `
+                        <li>
+                            <strong>Patient:</strong> ${booking.patient__child_name}<br>
+                            <strong>Vaccination:</strong> ${booking.vaccinations}<br>
+                            <strong>Status:</strong> ${booking.status}<br>
+                    `;
+
+                    // Check if booking is refundable or already refunded
+                    if (booking.status === 'Refunded') {
+                        bookingsHtml += `<button class="refund-btn" disabled>Refunded</button>`;
+                    } else if (booking.status !== 'Completed') {
+                        bookingsHtml += `<button class="refund-btn" data-booking-id="${booking.id}" onclick="processRefund(this)">Refund</button>`;
+
+
+                    } else {
+                        bookingsHtml += `<button class="refund-btn" disabled>Not Refundable</button>`;
+                    }
+
+                    bookingsHtml += "</li>";
+                });
+                bookingsHtml += "</ul>";
+                document.getElementById("bookings-container").innerHTML = bookingsHtml;
+            } else {
+                document.getElementById("bookings-container").innerHTML = "No bookings found for this leave date.";
+            }
+            openViewBookingsModal();
+        })
+        .catch(error => {
+            console.error('Error fetching bookings:', error);
+            document.getElementById("bookings-container").innerHTML = "Error fetching bookings.";
+            openViewBookingsModal();
+        });
+}
+
+
+// Function to get CSRF token from cookies
+function getCSRFToken() {
+    const name = 'csrftoken';
+    const value = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return value ? value.pop() : '';
+}
+
+// Process the refund
+function processRefund(button) {
+    const bookingId = button.getAttribute('data-booking-id');
+    
+    console.log('Booking ID:', bookingId);  // Debugging line
+
+    if (!bookingId) {
+        console.error('Booking ID is not available');
+        return;
+    }
+
+    fetch(`/refund/${bookingId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken(),  // Get CSRF token from cookie
+        },
+        body: JSON.stringify({
+            'booking_id': bookingId,  // Pass the booking_id in the body of the request
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Booking refunded successfully!');
+            viewBookings(bookingId); // Refresh bookings list to show updated status
+        } else {
+            alert('Failed to refund booking: ' + (data.message || 'Unknown error.'));
+        }
+    })
+    .catch(error => {
+        console.error('Error processing refund:', error);
+    });
+}
+
+
+
+
+ </script>
+</body>
+</html>

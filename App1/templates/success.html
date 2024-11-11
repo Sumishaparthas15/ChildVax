@@ -15,44 +15,116 @@
             min-height: 100vh;
         }
         .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px;
-            background-color: #5a2a82;
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .sidebar h3 {
-            color: #fff;
-            margin-bottom: 20px;
-        }
-        .sidebar a {
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            display: block;
-            width: 100%;
-            text-align: center;
-            margin: 5px 0;
-        }
-        .sidebar a:hover {
-            background-color: #4e2371;
-        }
-        .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 800px;
-            max-width: 700px;
-            margin: 20px auto;
-            margin-left: 520px;
-            margin-top: 50px;
-        }
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #5a2a82;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s;
+    transform: translateX(-100%);
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    to { transform: translateX(0); }
+}
+
+/* Sidebar Header */
+.sidebar-header h3 {
+    color: #fff;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+/* User Info Section */
+.user-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 10px;
+    width: 90%;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.user-info span {
+    display: block;
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.profile-button {
+    display: inline-block;
+    color: #fff;
+    background-color: #4e2371;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.profile-button:hover {
+    background-color: #3d1d63;
+}
+
+/* Sidebar Links */
+.sidebar-links {
+    width: 100%;
+}
+
+.sidebar-links a {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 20px;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 8px 0;
+    transition: background-color 0.3s, transform 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-links a:hover {
+    background-color: #4e2371;
+    transform: translateX(10px);
+}
+
+/* White Stroke/Underline for Links */
+.sidebar-links a::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin: auto;
+    opacity: 0.7;
+    transition: transform 0.2s;
+}
+
+.sidebar-links a:hover::after {
+    transform: scaleX(1.1);
+}
+
+.container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 100%;              /* Ensures responsiveness */
+    max-width: 800px;          /* Limits the container width */
+    margin: 50px auto;         /* Centers the container horizontally */
+}
+
         .container h1 {
             text-align: center;
             color: #5a2a82;
@@ -73,16 +145,26 @@
 <body>
     <nav class="navbar">
         <div class="sidebar">
-            <h3>Navigation</h3>
-            <a href="{% url 'bookup' %}">Book Up</a>
-            <a href="{% url 'about' %}">About</a>
-            <a href="{% url 'profile' %}">Profile</a>
-            <a href="{% url 'history' %}">Op History</a>
-           
-            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                {% csrf_token %}
-            </form>
-            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <div class="sidebar-header">
+                <h3>ChildVax</h3>
+            </div>
+            
+            <div class="user-info">
+                <span>Hi, {{ user.username }}</span>
+                <a href="{% url 'profile' %}" class="profile-button">View Profile</a>
+            </div>
+            
+            <div class="sidebar-links">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'bookup' %}">Book Up</a>
+                <a href="{% url 'about' %}">About</a>
+                <a href="{% url 'history' %}">Op History</a>
+                
+                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            </div>
         </div>
     </nav>
     <div class="container">
@@ -90,7 +172,16 @@
         <div class="details">
             <p>Your vaccination booking has been successfully created.</p>
             <p><strong>OP Number:</strong> {{ booking.token_number }}</p>
-            <p><strong>Appointment Time:</strong> 10:00 AM - 11:00 AM</p>
+
+            {% if booking.token_number <= 10 %}
+                <p><strong>Appointment Time:</strong> 09:00 AM - 10:00 AM</p>
+            {% elif booking.token_number <= 20 %}
+                <p><strong>Appointment Time:</strong> 10:30 AM - 11:00 AM</p>
+            {% elif booking.token_number <= 30 %}
+                <p><strong>Appointment Time:</strong> 11:30 AM - 12:30 PM</p>
+            {% else %}
+                <p><strong>Appointment Time:</strong> Please contact the clinic for scheduling</p>
+            {% endif %}
         </div>
         <a href="{% url 'bookup' %}">Book another appointment</a>
     </div>
