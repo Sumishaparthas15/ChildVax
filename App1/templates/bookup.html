@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Vaccination Booking Form</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #WHITE;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #5a2a82;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar h3 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin: 5px 0;
+        }
+        .sidebar a:hover {
+            background-color: #4e2371;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 800px;
+            max-width: 700px;
+            margin: 20px auto;
+            margin-left: 520px;
+            margin-top: 50px;
+        }
+        .container h1 {
+            text-align: center;
+            color: #5a2a82;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #5a2a82;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #4e2371;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+        }
+        .helpline {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .helpline span {
+            display: block;
+            color: #5a2a82;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="sidebar">
+            <h3>Navigation</h3>
+            <a href="{% url 'bookup' %}">Book Up</a>
+            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'history' %}">Op History</a>
+           
+            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                {% csrf_token %}
+            </form>
+            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Child Vaccination</h1>
+        <div class="helpline">
+            <span>Helpline Number</span>
+            <span>0483 211 5555</span>
+        </div>
+        <form id="booking-form" action="{% url 'book_vaccination' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" value="{{ user.child_name }}" class="form-control" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="text" id="dob" value="{{ user.date_of_birth  }}" class="form-control" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="vaccination">Vaccinations</label>
+                <select id="vaccination" name="vaccination">
+                    <option value="">Select Vaccine</option>
+            
+                    <!-- Hepatitis B (HBV) -->
+                    <option value="hepatitis_b_dose_1">Hepatitis B (HBV) - 1st dose (Birth)</option>
+                    <option value="hepatitis_b_dose_2">Hepatitis B (HBV) - 2nd dose (1-2 months)</option>
+                    <option value="hepatitis_b_dose_3">Hepatitis B (HBV) - 3rd dose (6-12 months)</option>
+            
+                    <!-- Rotavirus (RV) -->
+                    <option value="rotavirus_dose_1">Rotavirus (RV) - 1st dose (2 months)</option>
+                    <option value="rotavirus_dose_2">Rotavirus (RV) - 2nd dose (4 months)</option>
+                    <option value="rotavirus_dose_3">Rotavirus (RV) - 3rd dose (6 months)</option>
+            
+                    <!-- Diphtheria, Tetanus, & Pertussis (DTaP) -->
+                    <option value="dtap_dose_1">Diphtheria, Tetanus, & Pertussis (DTaP) - 1st dose (2 months)</option>
+                    <option value="dtap_dose_2">Diphtheria, Tetanus, & Pertussis (DTaP) - 2nd dose (4 months)</option>
+                    <option value="dtap_dose_3">Diphtheria, Tetanus, & Pertussis (DTaP) - 3rd dose (6 months)</option>
+                    <option value="dtap_dose_4">Diphtheria, Tetanus, & Pertussis (DTaP) - 4th dose (15-18 months)</option>
+                    <option value="dtap_dose_5">Diphtheria, Tetanus, & Pertussis (DTaP) - 5th dose (4-6 years)</option>
+            
+                    <!-- Haemophilus influenzae type b (Hib) -->
+                    <option value="hib_dose_1">Haemophilus influenzae type b (Hib) - 1st dose (2 months)</option>
+                    <option value="hib_dose_2">Haemophilus influenzae type b (Hib) - 2nd dose (4 months)</option>
+                    <option value="hib_dose_3">Haemophilus influenzae type b (Hib) - 3rd dose (6 months)</option>
+                    <option value="hib_dose_4">Haemophilus influenzae type b (Hib) - 4th dose (12-15 months)</option>
+            
+                    <!-- Pneumococcal Conjugate (PCV13) -->
+                    <option value="pcv13_dose_1">Pneumococcal Conjugate (PCV13) - 1st dose (2 months)</option>
+                    <option value="pcv13_dose_2">Pneumococcal Conjugate (PCV13) - 2nd dose (4 months)</option>
+                    <option value="pcv13_dose_3">Pneumococcal Conjugate (PCV13) - 3rd dose (6 months)</option>
+                    <option value="pcv13_dose_4">Pneumococcal Conjugate (PCV13) - 4th dose (12-15 months)</option>
+            
+                    <!-- Inactivated Poliovirus (IPV) -->
+                    <option value="ipv_dose_1">Inactivated Poliovirus (IPV) - 1st dose (2 months)</option>
+                    <option value="ipv_dose_2">Inactivated Poliovirus (IPV) - 2nd dose (4 months)</option>
+                    <option value="ipv_dose_3">Inactivated Poliovirus (IPV) - 3rd dose (6-18 months)</option>
+                    <option value="ipv_dose_4">Inactivated Poliovirus (IPV) - 4th dose (4-6 years)</option>
+            
+                    <!-- Measles, Mumps, & Rubella (MMR) -->
+                    <option value="mmr_dose_1">Measles, Mumps, & Rubella (MMR) - 1st dose (12-15 months)</option>
+                    <option value="mmr_dose_2">Measles, Mumps, & Rubella (MMR) - 2nd dose (4-6 years)</option>
+            
+                    <!-- Varicella (Chickenpox) -->
+                    <option value="varicella_dose_1">Varicella - 1st dose (12-15 months)</option>
+                    <option value="varicella_dose_2">Varicella - 2nd dose (4-6 years)</option>
+            
+                    <!-- Influenza (Flu) -->
+                    <option value="influenza_annual">Influenza (Flu) - Annual dose (Starting at 6 months)</option>
+            
+                    <!-- Meningococcal -->
+                    <option value="meningococcal_dose_1">Meningococcal - 1st dose (11-12 years)</option>
+                    <option value="meningococcal_dose_2">Meningococcal - 2nd dose (16 years)</option>
+                    
+                </select>
+            </div>
+            
+            
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" placeholder="Choose your slot" min="{{ today|date:'Y-m-d' }}">
+                <small id="token-limit-message" style="color: red; display: none;"></small>
+            </div>
+            
+            <div class="form-group">
+                <label for="contact">Contact No.</label>
+                <input type="text" id="contact" value="{{ user.whatsapp_number }}" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <button type="button" id="rzp-button" disabled>Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('rzp-button').onclick = function(e){
+            e.preventDefault();
+            var options = {
+                "key": "rzp_test_d5VCv4MOwkIpcU", // Enter the Key ID generated from the Dashboard
+                "amount": 70000, // Amount is in currency subunits. Default currency is INR. Hence, 70000 refers to 700 INR
+                "currency": "INR",
+                "name": "Child Vaccination",
+                "description": "Appointment Fee",
+                "handler": function (response){
+                    document.getElementById('booking-form').submit();
+                },
+                "prefill": {
+                    "name": "sreaya vr",
+                    "email": "sreayarajan75@gmail.com",
+                    "contact": "8078747080"
+                },
+                "theme": {
+                    "color": "#5a2a82"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        }
+    </script>
+    <script>
+        const dateField = document.getElementById('date');
+        const messageField = document.getElementById('token-limit-message');
+        const submitButton = document.getElementById('rzp-button');
+    
+        dateField.addEventListener('change', function() {
+            const selectedDate = dateField.value;
+            if (!selectedDate) return;
+    
+            fetch(`/check_token_limit/?date=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        messageField.textContent = data.error;
+                        messageField.style.display = "block";
+                        submitButton.disabled = true;
+                    } else if (data.token_count >= 8) {
+                        messageField.textContent = "All tokens for the selected day are booked. Please choose another day.";
+                        messageField.style.display = "block";
+                        submitButton.disabled = true;
+                    } else {
+                        messageField.style.display = "none";
+                        submitButton.disabled = false;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+    
+</body>
+</html>

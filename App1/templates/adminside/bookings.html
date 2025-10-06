@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<style>
+    /* Global Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #ecf0f1;
+        display: flex;
+        height: 100vh;
+    }
+    .top-menu {
+        background-color: #2c3e50;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        color: #ecf0f1;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .top-menu a {
+        text-decoration: none;
+        color: #ecf0f1;
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .top-menu a:hover, .top-menu a.active {
+        background-color: #34495e;
+    }
+
+
+    /* Container for Sidebar and Main Content */
+    .container {
+        display: flex;
+        flex: 1;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+        width: 250px;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        display: flex;
+        flex-direction: column;
+        padding-top: 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 1.8em;
+        color: #ecf0f1;
+        text-transform: uppercase; /* Uppercase for a modern look */
+    }
+
+    .sidebar a {
+        padding: 15px 20px;
+        text-decoration: none;
+        color: #ecf0f1;
+        font-size: 1.1em;
+        transition: background 0.3s, padding 0.3s; /* Add transition for padding */
+        border-radius: 5px;
+        margin-bottom: 15px; /* Space between items */
+    }
+
+    .sidebar a:hover {
+        background-color: #34495e;
+        padding-left: 25px; /* Indentation effect on hover */
+    }
+
+    /* Main Content Styles */
+    .main-content {
+        flex: 1;
+        padding: 20px;
+        background-color: #ffffff;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background-color: #34495e;
+        color: #ffffff;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Status Dropdown Styling */
+    .status-dropdown {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        max-width: 200px; /* Control the width of the dropdown */
+    }
+
+    /* Pagination Styles */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        padding: 8px 15px;
+        margin: 0 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #34495e;
+    }
+
+    .pagination a:hover {
+        background-color: #34495e;
+        color: #fff;
+    }
+
+    .pagination .active {
+        background-color: #34495e;
+        color: #fff;
+    }
+</style>
+<body>
+    
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Child Vaccination</h2>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'patients' %}">Patients</a>
+            <a href="{% url 'bookings' %}">Bookings</a>
+            <a href="{% url 'notification' %}">Notification</a>
+            <a href="{% url 'admin_logout' %}">Logout</a>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2>Bookings List</h2>
+            <table>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Vaccinations</th>
+                    <th>Appointment Date</th>
+                    <th>Status</th>
+                </tr>
+                {% for booking in page_obj %}
+                <tr>
+                    <td>{{ booking.patient.child_name }}</td>
+                    <td>{{ booking.vaccinations }}</td>
+                    <td>{{ booking.appointment_date }}</td>
+                    <td>
+                        <form action="{% url 'update_booking_status' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                            <select name="new_status" class="status-dropdown" onchange="this.form.submit();">
+                                <option value="{{ booking.status }}" selected>{{ booking.status }}</option>
+                                {% if booking.status != 'Refunded' %}
+                                    <option value="Refunded">Reject & Refund</option>
+                                {% endif %}
+                                {% if booking.status != 'Completed' %}
+                                    <option value="Completed">Completed</option>
+                                {% endif %}
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+                
+                {% endfor %}
+            </table>
+
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>

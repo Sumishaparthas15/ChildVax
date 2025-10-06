@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Success</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #5a2a82;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar h3 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin: 5px 0;
+        }
+        .sidebar a:hover {
+            background-color: #4e2371;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 800px;
+            max-width: 700px;
+            margin: 20px auto;
+            margin-left: 520px;
+            margin-top: 50px;
+        }
+        .container h1 {
+            text-align: center;
+            color: #5a2a82;
+            margin-bottom: 20px;
+        }
+        .details {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="sidebar">
+            <h3>Navigation</h3>
+            <a href="{% url 'bookup' %}">Book Up</a>
+            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'history' %}">Op History</a>
+           
+            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                {% csrf_token %}
+            </form>
+            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Booking Successful</h1>
+        <div class="details">
+            <p>Your vaccination booking has been successfully created.</p>
+            <p><strong>OP Number:</strong> {{ booking.token_number }}</p>
+            <p><strong>Appointment Time:</strong> 10:00 AM - 11:00 AM</p>
+        </div>
+        <a href="{% url 'bookup' %}">Book another appointment</a>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 Your Clinic. All rights reserved.</p>
+    </div>
+</body>
+</html>

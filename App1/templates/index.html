@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediplus - Medical Services</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>
+                    
+                    <img src="{% static 'images/logo.png' %}" alt="Child Vaccination">
+                </h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="home">Home</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="#">Doctors</a></li>
+                <li><a href="#">Services</a></li>
+                {% comment %} <li><a href="#">Pages</a></li> {% endcomment %}
+                {% comment %} <li><a href="#">Blogs</a></li> {% endcomment %}
+                <li><a href="#">Contact Us</a></li>
+               
+            </ul>
+            <a href="login" class="appointment-btn">Login</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-text">
+            <h1>We Provide <span class="highlight">Medical</span> Services That You Can Trust!</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed nisl pellentesque, faucibus libero eu, gravida quam.</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn-primary">Get Appointment</a>
+                <a href="#" class="btn-secondary">About Us</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="{% static 'images/slider.jpg' %}" alt="Doctor">
+        </div>
+    </section>
+
+    <div class="container">
+        <a href="#emergency-details" class="box">
+            <h2>Emergency Cases</h2>
+            <p>Lorem ipsum sit amet consectetur adipiscing elit.</p>
+            <span>Learn More</span>
+        </a>
+        <a href="#doctors-details" class="box">
+            <h2>Doctors Timetable</h2>
+            <p>Lorem ipsum sit amet consectetur adipiscing elit.</p>
+            <span>Learn More</span>
+        </a>
+        <a href="#hours-details" class="box">
+            <h2>Opening Hours</h2>
+            <p>Monday - Friday: 8.00-20.00</p>
+            <span>Learn More</span>
+        </a>
+    </div>
+
+    <div class="details" id="emergency-details">
+        <h3>Emergency Cases Details</h3>
+        <p>More information about emergency cases and how to handle them.</p>
+        <a href="#">Close</a>
+    </div>
+
+    <div class="details" id="doctors-details">
+        <h3>Doctors Timetable Details</h3>
+        <p>Details about the availability of doctors.</p>
+        <a href="#">Close</a>
+    </div>
+
+    <div class="details" id="hours-details">
+        <h3>Opening Hours Details</h3>
+        <p>Details about the clinic's opening hours.</p>
+        <a href="#">Close</a>
+    </div>
+    <!-- Services Section -->
+<section class="services">
+    <div class="container">
+        <h2 class="title">We Are Always Ready To Help You & Your Family</h2>
+        <p class="subtitle">Lorem ipsum dolor sit amet consectetur adipisicing elit praesent aliquet pretium.</p>
+
+        <div class="service-items">
+            <div class="service-item">
+                <div class="service-icon">
+                    <img src="https://img.icons8.com/ios-filled/50/007BFF/ambulance.png" alt="Emergency Help Icon">
+                </div>
+                <h3>Emergency Help</h3>
+                <p>Lorem ipsum sit amet, consectetur adipiscing elit. Maecenas mi quam vulputate.</p>
+            </div>
+
+            <div class="service-item">
+                <div class="service-icon">
+                    <img src="https://img.icons8.com/ios-filled/50/007BFF/pharmacy.png" alt="Pharmacy Icon">
+                </div>
+                <h3>Enriched Pharmacy</h3>
+                <p>Lorem ipsum sit amet, consectetur adipiscing elit. Maecenas mi quam vulputate.</p>
+            </div>
+
+            <div class="service-item">
+                <div class="service-icon">
+                    <img src="https://img.icons8.com/ios-filled/50/007BFF/stethoscope.png" alt="Medical Treatment Icon">
+                </div>
+                <h3>Medical Treatment</h3>
+                <p>Lorem ipsum sit amet, consectetur adipiscing elit. Maecenas mi quam vulputate.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<div class="pricing-section">
+    <div class="pricing-card">
+        <div class="icon">
+            <img src="https://img.icons8.com/ios/50/000000/scissors.png" alt="Plastic Surgery">
+        </div>
+        <h3>Plastic Surgery</h3>
+        <h2>$199 <span>/ Per Visit</span></h2>
+        <ul>
+            <li>✔ Lorem Ipsum Dolor Sit</li>
+            <li>✔ Cubitur Sollicitudin Fentum</li>
+            <li>✘ Nullam Interdum Enim</li>
+            <li>✘ Donec Ultricies Metus</li>
+            <li>✘ Pellentesque Eget Nibh</li>
+        </ul>
+        <a href="#" class="btn">Book Now</a>
+    </div>
+
+    <div class="pricing-card">
+        <div class="icon">
+            <img src="https://img.icons8.com/ios/50/000000/tooth.png" alt="Teeth Whitening">
+        </div>
+        <h3>Teeth Whitening</h3>
+        <h2>$299 <span>/ Per Visit</span></h2>
+        <ul>
+            <li>✔ Lorem Ipsum Dolor Sit</li>
+            <li>✔ Cubitur Sollicitudin Fentum</li>
+            <li>✔ Nullam Interdum Enim</li>
+            <li>✘ Donec Ultricies Metus</li>
+            <li>✘ Pellentesque Eget Nibh</li>
+        </ul>
+        <a href="#" class="btn">Book Now</a>
+    </div>
+
+    <div class="pricing-card">
+        <div class="icon">
+            <img src="https://img.icons8.com/ios/50/000000/heart-health.png" alt="Heart Surgery">
+        </div>
+        <h3>Heart Surgery</h3>
+        <h2>$399 <span>/ Per Visit</span></h2>
+        <ul>
+            <li>✔ Lorem Ipsum Dolor Sit</li>
+            <li>✔ Cubitur Sollicitudin Fentum</li>
+            <li>✔ Nullam Interdum Enim</li>
+            <li>✔ Donec Ultricies Metus</li>
+            <li>✔ Pellentesque Eget Nibh</li>
+        </ul>
+        <a href="#" class="btn">Book Now</a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        header {
+            background: #fff;
+            padding: 10px 0;
+        }
+
+        header nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        header nav ul li {
+            margin: 0 20px;
+        }
+
+        header nav ul li a {
+            color: black;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        header .btn.book-appointment {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            margin-left: auto;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 60px); /* Adjust for header height */
+        }
+
+        form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        h6 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .forgot-password {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .forgot-password a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+
+        .message-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .message-list li {
+            background: #ffdddd;
+            color: #d8000c;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 5px solid #d8000c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Doctor</a></li>
+                    <li><a href="#">Services</a></li>
+                    {% comment %} <li><a href="#">Pages</a></li>
+                    <li><a href="#">Blogs</a></li> {% endcomment %}
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="{% url 'login' %}" class="btn book-appointment">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    {% if messages %}
+    <ul class="message-list">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <!-- Login Form -->
+    <div class="login-container">
+        <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+            <h2 style="text-align: center; margin-bottom: 20px;">Login</h2>
+
+            {{ form.non_field_errors }}
+
+            <label for="username">Username:</label>
+            {{ form.username }}
+
+            <label for="password">Password:</label>
+            {{ form.password }}
+            
+            
+
+            <button type="submit">Login</button>
+            {% comment %} <h5><a href="{% url 'forgetpassword' %}">Forgot Password?</a><h5> {% endcomment %}
+            <h6>Don't have an account? <a href="{% url 'register' %}" class="btn book-appointment">Register</a></h6>
+        </form>
+    </div>
+</body>
+</html>

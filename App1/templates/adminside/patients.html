@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Vaccine Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+<style>
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #ecf0f1;
+    display: flex;
+    height: 100vh;
+}
+.top-menu {
+    background-color: #2c3e50;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    color: #ecf0f1;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.top-menu a {
+    text-decoration: none;
+    color: #ecf0f1;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.top-menu a:hover, .top-menu a.active {
+    background-color: #34495e;
+}
+
+
+/* Container for Sidebar and Main Content */
+.container {
+    display: flex;
+    flex: 1;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+    color: #ecf0f1;
+    text-transform: uppercase; /* Uppercase for a modern look */
+}
+
+.sidebar a {
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #ecf0f1;
+    font-size: 1.1em;
+    transition: background 0.3s, padding 0.3s; /* Add transition for padding */
+    border-radius: 5px;
+    margin-bottom: 15px; /* Space between items */
+}
+
+.sidebar a:hover {
+    background-color: #34495e;
+    padding-left: 25px; /* Indentation effect on hover */
+}
+
+/* Main Content Styles */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+.main-content h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 1.5em;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+tr:hover {
+    background-color: #f2f2f2; /* Highlight row on hover */
+}
+
+/* Button Styles */
+.view-button, .block-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.3s, transform 0.2s; /* Add transition for effects */
+}
+
+.view-button {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.view-button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.block-button {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.block-button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+</style>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Child Vaccination</h2>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'patients' %}">Patients</a>
+            <a href="{% url 'bookings' %}">Bookings</a>
+            <a href="{% url 'notification' %}">Notification</a>
+            <a href="{% url 'admin_logout' %}">Logout</a>
+        </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2>Patients</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patients</th>
+                        <th>Phone Number</th>
+                        <th>Details</th>
+                        {% comment %} <th>Block/Unblock</th> {% endcomment %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                    <tr>
+                        <td>{{ patient.child_name }}</td>
+                        <td>{{ patient.phone_number }}</td>
+                        <td><a href="{% url 'patient_details' patient_id=patient.id %}" class="view-button">View</a></td>
+                        {% comment %} <td>
+                            <form action="{% url 'toggle_block_patient' patient_id=patient.id %}" method="post">
+                                {% csrf_token %}
+                                {% if patient.disability %}  <!-- Check the disability field -->
+                                    <button type="submit" class="block-button">Unblock</button>
+                                {% else %}
+                                    <button type="submit" class="block-button">Block</button>
+                                {% endif %}
+                            </form>
+                        </td> {% endcomment %}
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+    <script>
+        document.querySelectorAll('.status-dropdown').forEach(function(dropdown) {
+            dropdown.addEventListener('change', function() {
+                this.disabled = true; // Disable the dropdown after selection
+            });
+        });
+    </script>
+    
+</body>
+</html>

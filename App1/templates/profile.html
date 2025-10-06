@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            background-color: #5a2a82;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+           
+        }
+        .sidebar h3  {
+            color: #fff;
+            margin-bottom: 20px;
+            
+        }
+        .sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            text-align: center;
+            width: 100%;
+            margin: 5px 0;
+        }
+        .sidebar a:hover {
+            background-color: #4e2371;
+         
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 800px;
+            max-width: 700px;
+            margin: 20px auto;
+        }
+        .container h2 {
+            text-align: center;
+            color: #5a2a82;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        td:first-child {
+            font-weight: bold;
+            color: #5a2a82;
+        }
+        .edit-icon, .save-button, .cancel-button {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .edit-icon {
+            color: #007bff;
+        }
+        .save-button {
+            color: #28a745;
+        }
+        .cancel-button {
+            color: #dc3545;
+        }
+        .hidden {
+            display: none;
+        }
+        .edit-input {
+            width: 100%;
+        }
+        .gender-box label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+    <div class="sidebar">
+        <h3>Navigation</h3>
+        <a href="{% url 'bookup' %}">Book Up</a>
+        <a href="{% url 'about' %}">About</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'history' %}">Op History</a>
+       
+        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+            {% csrf_token %}
+        </form>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+    </div>
+</nav>
+    <div class="content">
+        <div class="container">
+            <h2>Welcome, {{ user.username }}</h2>
+            <table>
+                <tbody id="profileTable">
+                    <tr>
+                        <td>PARENT NAME</td>
+                        <td>
+                            <span class="display-value">{{ user.username }}</span>
+                            <input type="text" name="username" class="edit-input hidden" value="{{ user.username }}">
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>PHONE NUMBER</td>
+                        <td>
+                            <span class="display-value">{{ user.phone_number }}</span>
+                            <input type="text" name="phone_number" class="edit-input hidden" value="{{ user.phone_number }}">
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ADDRESS</td>
+                        <td>
+                            <span class="display-value">{{ user.address }}</span>
+                            <input type="text" name="address" class="edit-input hidden" value="{{ user.address }}">
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CHILD NAME</td>
+                        <td>
+                            <span class="display-value">{{ user.child_name }}</span>
+                            <input type="text" name="child_name" class="edit-input hidden" value="{{ user.child_name }}">
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>WHATSAPP NUMBER</td>
+                        <td>
+                            <span class="display-value">{{ user.whatsapp_number }}</span>
+                            <input type="text" name="whatsapp_number" class="edit-input hidden" value="{{ user.whatsapp_number }}">
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        
+                        <td>DATE OF BIRTH</td>
+                        <td>
+                            <span class="display-value">{{ user.date_of_birth }}</span>
+                            <input type="date" name="date_of_birth" class="edit-input hidden" value="{{ user.date_of_birth }}">
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                         </td>
+                  </tr>
+                     <form method="post" action="{% url 'profile_edit' %}">  <!-- Updated with your view URL -->
+                        {% csrf_token %}
+                        <td>GENDER</td>
+                        <td>
+                            <span class="display-value">{{ user.gender }}</span>
+                            <div class="edit-input hidden gender-box">
+                                <label>
+                                    <select name="gender">
+                                        <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
+                                        <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
+                                        <option value="other" {% if user.gender == 'other' %}selected{% endif %}>Other</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <button type="submit" class="save-button hidden">Save</button>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                        </td>
+                    </form>
+                    
+                    <tr>
+                        <td>DISABILITY</td>
+                        <td>
+                            <span class="display-value">{{ user.disability }}</span>
+                            <div class="edit-input hidden">
+                                <label><input type="radio" name="disability" value="yes" onchange="toggleDisabilityDescription(this)"> Yes</label>
+                                <label><input type="radio" name="disability" value="no" onchange="toggleDisabilityDescription(this)"> No</label>
+                            </div>
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                        </td>
+                    </tr>
+                    <tr id="disabilityDescriptionRow" style="display: none;">
+                        <td>DISABILITY DESCRIPTION</td>
+                        <td>
+                            <span class="display-value">{{ user.disability_description }}</span>
+                            <input type="text" name="disability_description" class="edit-input hidden" value="{{ user.disability_description }}">
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                        </td>
+                    </tr>   
+                    <tr>
+                        <td>UPI NUMBER</td>
+                        <td>
+                            <span class="display-value">{{ user.upi_number }}</span>
+                            <input type="text" name="upi_number" class="edit-input hidden" value="{{ user.upi_number }}">
+                            <i class="edit-icon" onclick="toggleEditMode(this)">Edit</i>
+                            <i class="save-button hidden" onclick="saveChanges(this)">Save</i>
+                            <i class="cancel-button hidden" onclick="cancelEdit(this)">Cancel</i>
+                        </td>
+                    </tr>
+                     
+                    
+                </tbody>
+            </table>
+        </div> 
+    </div>
+    <script>
+        function toggleDisabilityDescription(element) {
+            const descriptionRow = document.getElementById('disabilityDescriptionRow');
+            if (element.value === 'yes') {
+                descriptionRow.style.display = '';
+            } else {
+                descriptionRow.style.display = 'none';
+            }
+        }
+
+        function toggleEditMode(icon) {
+            const td = icon.closest('td');
+            td.querySelector('.display-value').classList.toggle('hidden');
+            td.querySelector('.edit-input').classList.toggle('hidden');
+            td.querySelector('.save-button').classList.toggle('hidden');
+            td.querySelector('.cancel-button').classList.toggle('hidden');
+            icon.classList.toggle('hidden');
+        }
+
+        function saveChanges(button) {
+            const td = button.closest('td');
+            const input = td.querySelector('.edit-input');
+            const displayValue = td.querySelector('.display-value');
+            const fieldName = input.name;
+
+            // Prepare data for AJAX request
+            const data = {
+                [fieldName]: input.value
+            };
+
+            // Make AJAX request
+            fetch('/profile/edit/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}' // Ensure CSRF token is included
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayValue.textContent = input.value;
+                    toggleEditMode(td.querySelector('.edit-icon'));
+                } else {
+                    alert('Error updating profile.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function cancelEdit(button) {
+            const td = button.closest('td');
+            const input = td.querySelector('.edit-input');
+            const displayValue = td.querySelector('.display-value');
+            input.value = displayValue.textContent;
+            toggleEditMode(td.querySelector('.edit-icon'));
+        }
+    </script>
+</body>
+</html>

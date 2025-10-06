@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ecf0f1;
+            display: flex;
+            height: 100vh;
+        }
+        .top-menu {
+            background-color: #2c3e50;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            color: #ecf0f1;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .top-menu a {
+            text-decoration: none;
+            color: #ecf0f1;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .top-menu a:hover, .top-menu a.active {
+            background-color: #34495e;
+        }
+
+        /* Container for Sidebar and Main Content */
+        .container {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            color: #ecf0f1;
+            text-transform: uppercase;
+        }
+        
+        .sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #ecf0f1;
+            font-size: 1.1em;
+            transition: background 0.3s, padding 0.3s;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar a:hover {
+            background-color: #34495e;
+            padding-left: 25px;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+    
+        .content-header {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        /* Flexbox for charts */
+        .charts {
+            display: flex;
+            justify-content: space-between; /* Space between charts */
+        }
+
+        .chart-container {
+            width: 48%; /* Adjust width to take half of the space */
+            height: 400px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Child Vaccination</h2>
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'patients' %}">Patients</a>
+        <a href="{% url 'bookings' %}">Bookings</a>
+        <a href="{% url 'notification' %}">Notification</a>
+        <a href="{% url 'admin_logout' %}">Logout</a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="content-header">Dashboard</div>
+
+        <!-- Flex container for charts -->
+        <div class="charts">
+            <!-- Pie Chart for Vaccination Bookings -->
+            <div class="chart-container">
+                <canvas id="vaccineChart"></canvas>
+            </div>
+
+            <!-- Bar Chart for Registered Patients -->
+            <div class="chart-container">
+                <canvas id="registrationChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pie Chart for Vaccination Bookings
+        const ctxVaccine = document.getElementById('vaccineChart').getContext('2d');
+        const vaccineChart = new Chart(ctxVaccine, {
+            type: 'pie',
+            data: {
+                labels: {{ vaccine_labels|safe }},
+                datasets: [{
+                    label: 'Vaccination Bookings',
+                    data: {{ vaccine_counts|safe }},
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Vaccination Bookings Distribution'
+                    }
+                }
+            }
+        });
+
+        // Bar Chart for Registered Patients
+        const ctxRegistration = document.getElementById('registrationChart').getContext('2d');
+        const registrationChart = new Chart(ctxRegistration, {
+            type: 'bar',
+            data: {
+                labels: ['Registered This Month'],
+                datasets: [{
+                    label: 'Patients Registered',
+                    data: [{{ registered_this_month }}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Patients'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Patients Registered This Month'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!-- adminside/admin_login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 2em;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 1em;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 0.5em 0 0.2em;
+            text-align: left;
+        }
+        input {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .login-button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 0.5em;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .login-button:hover {
+            background-color: #45a049;
+        }
+        .error-message {
+            color: red;
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Admin Login</h2>
+        {% if form.errors %}
+            <p class="error-message">Invalid username or password. Please try again.</p>
+        {% endif %}
+        <form method="post" action="{% url 'admin_login' %}">
+            {% csrf_token %}
+            <label for="id_username">Username</label>
+            <input type="text" name="username" id="id_username" required>
+
+            <label for="id_password">Password</label>
+            <input type="password" name="password" id="id_password" required>
+
+            <button type="submit" class="login-button">Login</button>
+        </form>
+    </div>
+</body>
+</html>
