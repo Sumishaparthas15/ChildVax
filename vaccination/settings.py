@@ -122,12 +122,12 @@ AUTH_USER_MODEL = 'App1.Profile'
 
 DATABASES = {
     'default': {
-        'ENGINE': "django.db.backends.postgresql",
-        'NAME':"vaccination",
-        "USER":"postgres",
-        "PASSWORD":"7654321",
-        "HOST":"localhost",
-        "PORT":"5432"
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'your_db_name',
+        'USER': 'your_db_user',
+        'PASSWORD': 'your_password',
+        'HOST': 'localhost',  
+        'PORT': '5432',
     }
 }
 
